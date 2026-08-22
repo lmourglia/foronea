@@ -50,6 +50,7 @@
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } * { animation:none !important; transition:none !important; } }
+  #top, #el-foro, #ejes, #disertantes, #sponsors, #sede, #contacto{ scroll-margin-top:88px; }
 
   body{
     margin:0;
@@ -239,7 +240,16 @@
   .hero-inner{
     position:relative; z-index:2;
     max-width:640px;
-    padding:150px 0 68px;
+    padding:150px 28px 68px;
+  }
+  @media (max-width:760px){
+    .hero{ justify-content:center; }
+    .hero-inner{ text-align:center; padding-top:120px; }
+    .hero .lede{ margin-left:auto; margin-right:auto; }
+    .hero-meta{ justify-content:center; }
+    .hero-actions{ justify-content:center; }
+    .hero-organizer{ justify-content:center; }
+    .hero-countdown .cd-row{ justify-content:center; }
   }
   .hero .eyebrow{ margin-bottom:22px; color:var(--ink-dim); }
   .hero .eyebrow .dot{ box-shadow:0 0 0 4px rgba(61,139,207,0.22); }
@@ -423,11 +433,12 @@
 
   /* ============ SPEAKERS ============ */
   .speakers-note{
-    display:flex; align-items:center; gap:12px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:10px 12px;
     margin-bottom:32px;
     font-size:14.5px;
     color:var(--ink-dim);
   }
+  .speakers-note .badge{ flex-shrink:0; }
   .speakers-grid{
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -1056,7 +1067,7 @@
           <p>Al inscribirte serás redirigido al formulario de inscripción, donde vas a poder indicar quién te refiere: tu APAS o la compañía a la que representás. Cuanto antes te anotes, antes aseguras tu lugar en el evento — los cupos se otorgan por orden de inscripción.</p>
           <div class="hero-actions" style="margin-top:28px;">
             <a class="btn btn-primary" href="https://forms.monday.com/forms/55bccd3bf86437be00f7af1730ded2ba?r=use1" target="_blank" rel="noopener">Quiero inscribirme</a>
-            <a class="btn btn-ghost" href="tel:+543624126275">Llamar</a>
+            <a class="btn btn-ghost" href="tel:+5493624133172">Llamar</a>
           </div>
         </div>
         <div class="contact-list">
