@@ -579,6 +579,7 @@ function vistaPlata(){
        +'<span class="fn">'+pr[p]+'</span></div>';}).join("")
    +'</div></section>';
   h+='<div class="quien">Sesión de '+esc(miEmail||"—")+'</div>'
+   +'<button class="salir" id="clave">Cambiar mi contraseña</button>'
    +'<button class="salir" id="salir">Cerrar sesión</button>';
   return h;
 }
@@ -772,30 +773,48 @@ function pantalla(html){ROOT.innerHTML='<div class="gate"><div class="gate-in">'
 
 function pantallaLogin(msg){
   pantalla('<h1 class="gate-t">Ruta Foro NEA</h1>'
-   +'<p class="gate-p">Seguimiento de sponsors del Foro del NEA 2026. Entrá con tu mail: '
-   +'te llega un link y no hace falta contraseña.</p>'
-   +'<div class="fld"><label for="mail">Tu mail</label>'
-   +'<input id="mail" type="email" inputmode="email" autocomplete="email" placeholder="vos@mail.com"></div>'
-   +'<button class="act" id="entrar" style="width:100%">Mandarme el link</button>'
+   +'<p class="gate-p">Seguimiento de sponsors del Foro del NEA 2026.</p>'
+   +'<div class="fld"><label for="mail">Mail</label>'
+   +'<input id="mail" type="email" inputmode="email" autocomplete="username" '
+   +'autocapitalize="off" spellcheck="false" placeholder="vos@mail.com"></div>'
+   +'<div class="fld"><label for="pass">Contraseña</label>'
+   +'<input id="pass" type="password" autocomplete="current-password" placeholder="••••••••"></div>'
+   +'<button class="act" id="entrar" style="width:100%">Entrar</button>'
    +(msg?'<p class="gate-e">'+esc(msg)+'</p>':'')
-   +'<p class="gate-n">Solo entran los mails cargados por el administrador.</p>');
+   +'<p class="gate-n">Si todavía no tenés usuario, pedíselo a Lucas.</p>');
+
   var b=document.getElementById("entrar");
-  b.addEventListener("click",function(){
+  function intentar(){
     var m=(document.getElementById("mail").value||"").trim();
-    if(!m||m.indexOf("@")<0){pantallaLogin("Escribí un mail válido.");return;}
-    b.textContent="Mandando…";b.disabled=true;
-    sb.auth.signInWithOtp({email:m,options:{emailRedirectTo:location.href.split("#")[0]}})
-      .then(function(r){
-        if(r.error){pantallaLogin(r.error.message);return;}
-        pantalla('<h1 class="gate-t">Revisá tu mail</h1>'
-          +'<p class="gate-p">Le mandamos un link a <b>'+esc(m)+'</b>. '
-          +'Abrilo desde este mismo celular y entrás directo.</p>'
-          +'<p class="gate-n">Si no llega en un par de minutos, mirá en Spam.</p>');
-      });
+    var p=document.getElementById("pass").value||"";
+    if(!m||m.indexOf("@")<0){pantallaLogin("Escribí tu mail completo.");return;}
+    if(!p){pantallaLogin("Te falta la contraseña.");return;}
+    b.textContent="Entrando…"; b.disabled=true;
+    sb.auth.signInWithPassword({email:m,password:p}).then(function(r){
+      if(r.error)pantallaLogin(mensajeError(r.error));
+      // si sale bien, onAuthStateChange se encarga de cargar los datos
+    }).catch(function(){pantallaLogin("No se pudo conectar. Revisá que tengas internet.");});
+  }
+  b.addEventListener("click",intentar);
+  document.getElementById("pass").addEventListener("keydown",function(e){
+    if(e.key==="Enter")intentar();
   });
 }
 
+function mensajeError(err){
+  var t=((err&&err.message)||"").toLowerCase();
+  if(t.indexOf("invalid login")>=0)      return "Mail o contraseña incorrectos.";
+  if(t.indexOf("email not confirmed")>=0)return "El usuario existe pero está sin confirmar. "
+    +"En Supabase → Authentication → Users, editalo y marcá Auto Confirm.";
+  if(t.indexOf("rate limit")>=0||t.indexOf("too many")>=0)
+    return "Demasiados intentos seguidos. Esperá un minuto y probá de nuevo.";
+  return (err&&err.message)||"No se pudo entrar.";
+}
+
+var cargando=false;
 function cargar(){
+  if(cargando)return Promise.resolve();
+  cargando=true;
   pantalla('<h1 class="gate-t">Cargando…</h1><p class="gate-p">Trayendo las empresas.</p>');
   return Promise.all([
     sb.from("empresas").select("id,datos").order("id"),
@@ -806,8 +825,9 @@ function cargar(){
       if(!d.log)d.log=[];return d;});
     (res[1].data||[]).forEach(function(a){if(a.k==="meta")S.meta=Number(a.v)||0;
       if(a.k==="evento")S.evento=String(a.v).replace(/"/g,"");});
-    cachear(); render(); escuchar();
+    cachear(); cargando=false; render(); escuchar();
   }).catch(function(err){
+    cargando=false;
     var raw=null; try{raw=localStorage.getItem(CACHE);}catch(x){}
     if(raw){S=JSON.parse(raw);render();marcar("err");
       toast("Sin conexión: estás viendo la última copia guardada");}
@@ -909,7 +929,7 @@ function arrancar(){
   sb.auth.onAuthStateChange(function(evt,ses){
     var antes=!!sesion; sesion=ses;
     miEmail=ses&&ses.user?ses.user.email:"";
-    if(ses&&!antes)cargar();
+    if(ses&&!antes&&!cargando)cargar();
     if(!ses&&antes)pantallaLogin("");
   });
   sb.auth.getSession().then(function(r){
@@ -921,6 +941,14 @@ function arrancar(){
 
 document.addEventListener("click",function(ev){
   if(ev.target.id==="salir"){sb.auth.signOut().then(function(){location.reload();});}
+  if(ev.target.id==="clave"){
+    var n=prompt("Nueva contraseña (mínimo 6 caracteres)");
+    if(!n)return;
+    if(n.length<6){toast("Tiene que tener al menos 6 caracteres");return;}
+    sb.auth.updateUser({password:n}).then(function(r){
+      toast(r.error?("No se pudo cambiar: "+r.error.message):"Contraseña cambiada");
+    });
+  }
 });
 
 arrancar();
@@ -929,3 +957,4 @@ arrancar();
 </script>
 </body>
 </html>
+
