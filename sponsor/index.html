@@ -305,6 +305,48 @@ function diasEntre(a,b){return Math.round((Date.parse(b+"T00:00:00")-Date.parse(
 function plata(n){n=Number(n)||0;return "$"+n.toLocaleString("es-AR",{maximumFractionDigits:0});}
 function key(e){return e.replace(/[^A-Za-z]/g,"");}
 
+/* Los teléfonos argentinos vienen de mil formas: 0362 15-412-3456,
+   +54 362 458-0300, 362 4580300. Esto los deja en 10 dígitos (área + número). */
+function normTel(raw){
+  var t=String(raw||"").split("(")[0];          // cortar aclaraciones entre paréntesis
+  var d=t.replace(/\D/g,"");
+  if(!d)return "";
+  if(d.indexOf("0054")===0)d=d.slice(4);
+  else if(d.indexOf("54")===0&&d.length>10)d=d.slice(2);
+  if(d.charAt(0)==="0")d=d.slice(1);            // prefijo nacional
+  if(d.charAt(0)==="9"&&d.length>10)d=d.slice(1);
+  if(d.length>10){                               // sacar el 15 de los celulares viejos
+    for(var a=2;a<=4;a++){
+      if(d.substr(a,2)==="15"&&d.length-2===10){d=d.slice(0,a)+d.slice(a+2);break;}
+    }
+  }
+  return d;
+}
+function telHref(e){
+  var t=String(e.tel||"").split("(")[0].replace(/[^\d+]/g,"");
+  return t.length>=7?t:"";
+}
+function waHref(e){
+  // si escribís el WhatsApp empezando con +, se usa tal cual (salida manual)
+  var crudo=String(e.wa||"").trim();
+  if(crudo.charAt(0)==="+"){
+    var lit=crudo.replace(/\D/g,"");
+    return lit.length>=10?lit:"";
+  }
+  var d=normTel(e.wa||e.tel);
+  if(d.length!==10)return "";
+  if(d.indexOf("800")===0||d.indexOf("810")===0)return "";  // no son WhatsApp
+  return "549"+d;
+}
+function waLindo(e){
+  var w=waHref(e); if(!w)return "";
+  if(String(e.wa||"").trim().charAt(0)==="+")return "+"+w;
+  var d=w.slice(3);
+  // Buenos Aires es área de 2 dígitos; el resto del país, 3
+  if(d.indexOf("11")===0)return "+54 9 11 "+d.slice(2,6)+"-"+d.slice(6);
+  return "+54 9 "+d.slice(0,3)+" "+d.slice(3,6)+"-"+d.slice(6);
+}
+
 var CERRADO={Confirmado:1,Pagado:1,Rechazado:1};
 var ORDEN=["Prospecto","Contactado","Reunión","Propuesta","Negociación","Confirmado","Pagado","Rechazado","Pausado"];
 var PRIO_RANK={"A+":0,"A":1,"B":2,"C":3,"Institucional":4,"A investigar":5};
@@ -587,14 +629,14 @@ function vistaPlata(){
 /* ---------- ficha ---------- */
 function ficha(e){
   var links=[];
-  if(e.telH)links.push('<a class="lnk" href="tel:'+esc(e.telH)+'"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>Llamar</a>');
-  if(e.waH)links.push('<a class="lnk" href="https://wa.me/'+esc(e.waH)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-12.6 7.3L3 21l2.3-5.3A8.4 8.4 0 1121 11.5z"/></svg>WhatsApp</a>');
+  if(telHref(e))links.push('<a class="lnk" href="tel:'+esc(telHref(e))+'"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.2a2 2 0 012.1-.5c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>Llamar</a>');
+  if(waHref(e))links.push('<a class="lnk" href="https://wa.me/'+esc(waHref(e))+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 01-12.6 7.3L3 21l2.3-5.3A8.4 8.4 0 1121 11.5z"/></svg>WhatsApp</a>');
   if(e.em)links.push('<a class="lnk" href="mailto:'+esc(e.em)+'"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 6l8 6 8-6"/></svg>Mail</a>');
   if(e.web)links.push('<a class="lnk" href="'+esc(e.web)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18 15 15 0 010-18"/></svg>Web</a>');
   if(e.dir)links.push('<a class="lnk" href="https://www.google.com/maps/search/'+encodeURIComponent(e.dir.split("(")[0]+" Resistencia Chaco")+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 10-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Mapa</a>');
 
-  var datos=[["Decisor",e.de],["Cargo",e.ca],["Teléfono",e.tel],["Email",e.em],
-    ["Rubro",e.ru],["Paquete",e.pa],["Potencial",e.po],["Localidad",e.lo],["Dirección",e.dir]];
+  var datos=[["Rubro",e.ru],["Paquete",e.pa],["Potencial",e.po],
+    ["Localidad",e.lo],["Dirección",e.dir]];
 
   var h='<div class="sheet" role="dialog" aria-label="'+esc(e.n)+'">'
    +'<div class="sh-top"><div class="sh-in"><div class="sh-row">'
@@ -605,7 +647,25 @@ function ficha(e){
    +(e.conf?'<span class="e-chip" style="background:var(--good-soft);color:var(--good)">Dato confirmado</span>':'')
    +'</div></div></div><div class="sh-body">';
 
-  if(links.length)h+='<div class="blk"><div class="linkrow">'+links.join("")+'</div></div>';
+  h+='<div class="blk">'
+   +(links.length?'<div class="linkrow">'+links.join("")+'</div>'
+     :'<div class="note" style="margin:0 0 11px">Cargá el teléfono o el mail acá abajo y aparecen los botones para llamar y escribir.</div>')
+   +'</div>';
+
+  h+='<div class="blk"><div class="blk-h">Contacto</div>'
+   +'<div class="fld"><label for="c_de">Con quién hablo</label>'
+   +'<input id="c_de" type="text" value="'+esc(e.de)+'" placeholder="Nombre y apellido" autocapitalize="words"></div>'
+   +'<div class="fld"><label for="c_ca">Qué cargo tiene</label>'
+   +'<input id="c_ca" type="text" value="'+esc(e.ca)+'" placeholder="Ej: Gerente de Marketing"></div>'
+   +'<div class="fld"><label for="c_tel">Teléfono</label>'
+   +'<input id="c_tel" type="tel" inputmode="tel" value="'+esc(e.tel)+'" placeholder="362 458-0300"></div>'
+   +'<div class="fld"><label for="c_wa">WhatsApp <span style="font-weight:400">— solo si es distinto del teléfono</span></label>'
+   +'<input id="c_wa" type="tel" inputmode="tel" value="'+esc(e.wa||"")+'" placeholder="362 15-412-3456"></div>'
+   +(waLindo(e)?'<div class="note" style="margin:-4px 0 10px">WhatsApp va a abrir '+esc(waLindo(e))+'</div>':'')
+   +'<div class="fld"><label for="c_em">Mail</label>'
+   +'<input id="c_em" type="email" inputmode="email" autocapitalize="off" spellcheck="false" '
+   +'value="'+esc(e.em)+'" placeholder="nombre@empresa.com"></div>'
+   +'<div class="note" style="margin:0">Se guarda solo al salir de cada campo.</div></div>';
 
   h+='<div class="blk"><div class="blk-h">Registrar lo que pasó</div><div class="logs">'
    +boton("llame","Llamé","ghost")+boton("wsp","Mandé WhatsApp","ghost")
@@ -695,10 +755,10 @@ function aplicar(e,id){
 /* ---------- CSV ---------- */
 function csv(){
   var cols=["ID","Empresa","Rubro","Prioridad","Paquete","Decisor","Cargo","Teléfono","Email",
-    "Estado","Próxima acción","Fecha próxima acción","Monto solicitado","Monto acordado","Historial"];
+    "WhatsApp","Estado","Próxima acción","Fecha próxima acción","Monto solicitado","Monto acordado","Historial"];
   var rows=[cols];
   S.empresas.forEach(function(e){
-    rows.push([e.id,e.n,e.ru,e.pr,e.pa,e.de,e.ca,e.tel,e.em,e.es,e.px,e.pxf,e.ms||"",e.ma||"",
+    rows.push([e.id,e.n,e.ru,e.pr,e.pa,e.de,e.ca,e.tel,e.em,e.wa||"",e.es,e.px,e.pxf,e.ms||"",e.ma||"",
       e.log.map(function(l){return dmy(l.f)+" "+l.t+(l.d?": "+l.d:"");}).join(" | ")]);
   });
   return "﻿"+rows.map(function(r){return r.map(function(c){
@@ -742,16 +802,24 @@ document.addEventListener("click",function(ev){
 });
 function leerCampos(e){
   if(!e)return;
-  var px=document.getElementById("px"), pxf=document.getElementById("pxf"),
-      ms=document.getElementById("ms"), ma=document.getElementById("ma");
-  if(px)e.px=px.value; if(pxf)e.pxf=pxf.value;
-  if(ms)e.ms=Number(ms.value)||0; if(ma)e.ma=Number(ma.value)||0;
+  var v=function(id){var n=document.getElementById(id);return n?n.value:null;};
+  var px=v("px"), pxf=v("pxf"), ms=v("ms"), ma=v("ma");
+  if(px!==null)e.px=px; if(pxf!==null)e.pxf=pxf;
+  if(ms!==null)e.ms=Number(ms)||0; if(ma!==null)e.ma=Number(ma)||0;
+  var de=v("c_de"), ca=v("c_ca"), tel=v("c_tel"), wa=v("c_wa"), em=v("c_em");
+  if(de!==null)e.de=de.trim(); if(ca!==null)e.ca=ca.trim();
+  if(tel!==null)e.tel=tel.trim(); if(wa!==null)e.wa=wa.trim();
+  if(em!==null)e.em=em.trim();
 }
 document.addEventListener("change",function(ev){
   var id=ev.target.id;
   if(id==="meta"){S.meta=Number(ev.target.value)||0;guardar();render();return;}
   if(["px","pxf","ms","ma"].indexOf(id)>=0){var _e=porId(V.abierta);leerCampos(_e);guardar(_e);
     if(id==="pxf")render();return;}
+  if(["c_de","c_ca","c_tel","c_wa","c_em"].indexOf(id)>=0){
+    var _c=porId(V.abierta);leerCampos(_c);guardar(_c);
+    setTimeout(render,0);  // para que aparezcan/actualicen los botones
+    return;}
 });
 document.addEventListener("input",function(ev){
   if(ev.target.id==="q"){V.q=ev.target.value;refrescarLista();}
@@ -763,7 +831,7 @@ function agregar(){
   var pr=["A+","A","B","C","Institucional"].indexOf((p||"").trim())>=0?p.trim():"A investigar";
   var id=S.empresas.reduce(function(m,e){return Math.max(m,e.id);},0)+1;
   S.empresas.push({id:id,n:n.trim(),ru:"",pr:pr,ti:"",pa:"",po:"",lo:"Resistencia",de:"",ca:"",
-    tel:"",telH:"",waH:"",em:"",web:"",ig:"",dir:"",an:"",ar:"",ob:"Cargada desde el celular",
+    tel:"",wa:"",em:"",web:"",ig:"",dir:"",an:"",ar:"",ob:"Cargada desde el celular",
     conf:false,es:"Prospecto",px:"",pxf:"",ms:0,ma:0,log:[{f:hoyISO(),t:"Empresa agregada",d:""}]});
   guardar(porId(id));V.abierta=id;render();window.scrollTo(0,0);
 }
