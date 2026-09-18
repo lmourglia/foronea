@@ -333,6 +333,14 @@ a.pay-link:hover{background:#e0a52c;}
               <option value="No">No</option>
             </select>
           </div>
+          <div class="field">
+            <label for="f-pcc">&iquest;Acredit&aacute;s PCC?<span class="req">*</span></label>
+            <select id="f-pcc" name="pcc" required>
+              <option value="" disabled selected>Seleccion&aacute; una opci&oacute;n</option>
+              <option value="SI">S&iacute;</option>
+              <option value="No">No</option>
+            </select>
+          </div>
 
           <button class="submit" type="submit" id="submit-btn">
             <span id="submit-label">Registrar</span>
@@ -427,7 +435,8 @@ a.pay-link:hover{background:#e0a52c;}
       matricula: form.matricula.value.trim(),
       localidad: form.localidad.value.trim(),
       provincia: form.provincia.value.trim(),
-      socio: form.socio.value
+      socio: form.socio.value,
+      pcc: form.pcc.value
     };
 
     errorBanner.classList.remove('show');
@@ -468,7 +477,8 @@ a.pay-link:hover{background:#e0a52c;}
       ['Nombre', data.nombre + ' ' + data.apellido],
       ['DNI', data.dni],
       ['Localidad', data.localidad + ', ' + data.provincia],
-      ['Socio APAS Chaco', data.socio === 'SI' ? 'Sí' : 'No']
+      ['Socio APAS Chaco', data.socio === 'SI' ? 'Sí' : 'No'],
+      ['Acredita PCC', data.pcc === 'SI' ? 'Sí' : 'No']
     ].forEach(function(pair){
       var row = document.createElement('div');
       row.className = 'summary-row';
