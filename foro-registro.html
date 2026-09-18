@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foro del Seguro 2026</title>
+</head>
+<body>
+<style>
+:root{
+  --bg:#0f2743;
+  --bg-2:#0a1c30;
+  --surface:#15304f;
+  --input-bg:#1c3a5c;
+  --border: rgba(238,241,245,0.16);
+  --border-strong: rgba(238,241,245,0.26);
+  --ink:#eef1f5;
+  --ink-dim:#aebdd1;
+  --ink-faint:#7488a3;
+  --blue:#4a9fe0;
+  --blue-deep:#2470ad;
+  --gold:#f2b134;
+  --gold-dark:#c98f1e;
+  --ok:#5fb98a;
+  --font-display:"Fraunces","Iowan Old Style","Georgia",serif;
+  --font-body:"Public Sans",system-ui,-apple-system,sans-serif;
+  --font-mono:"IBM Plex Mono","SFMono-Regular",Menlo,monospace;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 12% -6%, rgba(74,159,224,0.20), transparent 46%),
+    radial-gradient(circle at 104% 108%, rgba(242,177,52,0.10), transparent 42%);
+  color:var(--ink);
+  font-family:var(--font-body);
+  padding-inline:16px;
+  padding-block:32px;
+  display:flex;
+  justify-content:center;
+}
+.wrap{width:100%;max-width:480px;}
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 24px 60px -24px rgba(0,0,0,0.6);
+}
+
+/* ---- portada / hero, en la línea del sitio del Foro ---- */
+.hero{
+  padding:26px 24px 24px;
+  background:
+    radial-gradient(circle at 85% -10%, rgba(74,159,224,0.28), transparent 55%),
+    var(--bg-2);
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.brand img{width:34px;height:34px;flex:none;}
+.brand .word{font-family:var(--font-display);font-weight:600;font-size:15.5px;color:var(--ink);}
+.brand .word small{display:block;font-family:var(--font-mono);font-size:9px;color:var(--ink-faint);letter-spacing:0.1em;font-weight:400;margin-top:1px;text-transform:uppercase;}
+
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ink-dim);
+  display:flex;align-items:center;gap:8px;
+  margin:0 0 14px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex:none;box-shadow:0 0 0 4px rgba(74,159,224,0.22);}
+
+.hero h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:1.85rem;
+  line-height:1.08;
+  letter-spacing:-0.01em;
+  margin:0 0 12px;
+  text-wrap:balance;
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(90deg,#7fc4ff,#cfe8ff 70%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero .lede{
+  font-size:0.92rem;
+  line-height:1.55;
+  color:var(--ink-dim);
+  margin:0 0 18px;
+  max-width:40ch;
+}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.badge{
+  font-family:var(--font-mono);
+  font-size:11px;
+  letter-spacing:0.03em;
+  padding:6px 11px;
+  border-radius:999px;
+  border:1px solid var(--border-strong);
+  color:var(--ink-dim);
+  background:rgba(6,11,18,0.35);
+}
+.hero-address{font-size:0.8rem;color:var(--ink-faint);line-height:1.6;margin-bottom:14px;}
+.hero-organizer{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  color:var(--ink-faint);
+  line-height:1.6;
+  padding-top:14px;
+  border-top:1px solid var(--border);
+}
+.hero-organizer strong{color:var(--ink-dim);font-weight:500;}
+
+/* ---- formulario ---- */
+.body-pad{padding:24px 24px 28px;}
+.error-banner{
+  display:none;
+  background:rgba(217,105,95,0.15);
+  border:1px solid #d9695f;
+  color:#f3b3ac;
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:0.85rem;
+  margin-bottom:16px;
+}
+.error-banner.show{display:block;}
+form{display:flex;flex-direction:column;gap:16px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field label{font-size:0.85rem;font-weight:600;color:var(--ink);font-family:var(--font-body);}
+.field label .req{color:var(--gold);margin-left:3px;}
+.field label .opt{color:var(--ink-faint);font-weight:400;font-size:0.78rem;margin-left:4px;}
+input, select{
+  width:100%;
+  background:var(--input-bg);
+  border:1px solid var(--border);
+  color:var(--ink);
+  border-radius:10px;
+  padding:12px 14px;
+  font-size:0.95rem;
+  font-family:inherit;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease;
+  appearance:none;
+}
+select{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%237488a3' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+}
+input:focus, select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(74,159,224,0.25);}
+button.submit{
+  margin-top:6px;
+  background:var(--blue);
+  color:#06111d;
+  border:none;
+  border-radius:12px;
+  padding:14px 18px;
+  font-size:1rem;
+  font-weight:700;
+  font-family:var(--font-body);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background .15s ease, transform .1s ease;
+}
+button.submit:hover{background:var(--blue-deep);}
+button.submit:active{transform:scale(0.99);}
+button.submit:disabled{opacity:0.6;cursor:progress;}
+button.submit svg{transition:transform .15s ease;}
+button.submit:hover svg{transform:translateX(3px);}
+
+/* ---- confirmación ---- */
+#view-confirm{display:none;}
+#view-confirm.show{display:block;}
+#view-form.hide{display:none;}
+.status-icon{
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;
+}
+.status-icon.ok{background:rgba(95,185,138,0.16);color:var(--ok);}
+.status-icon.pay{background:rgba(242,177,52,0.16);color:var(--gold);}
+#view-confirm h2{font-family:var(--font-display);font-size:1.4rem;margin:0 0 10px;font-weight:600;}
+#view-confirm p{color:var(--ink-dim);font-size:0.94rem;line-height:1.6;margin:0 0 6px;}
+.summary{
+  margin-top:18px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 16px;
+  display:flex;flex-direction:column;gap:8px;
+  font-size:0.85rem;
+}
+.summary-row{display:flex;justify-content:space-between;gap:12px;}
+.summary-row span:first-child{color:var(--ink-faint);font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;}
+.summary-row span:last-child{font-weight:600;text-align:right;}
+.ok-box{
+  margin-top:20px;
+  background:rgba(95,185,138,0.10);
+  border:1px solid rgba(95,185,138,0.35);
+  border-radius:14px;
+  padding:16px 18px;
+  font-size:0.9rem;
+}
+.pay-box{
+  margin-top:20px;
+  background:linear-gradient(160deg, rgba(242,177,52,0.18), rgba(242,177,52,0.06));
+  border:1px solid var(--gold-dark);
+  border-radius:14px;
+  padding:18px;
+}
+.pay-box .pay-label{
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--gold);
+  font-weight:600;
+  margin-bottom:8px;
+}
+.pay-box p{color:var(--ink);margin:0 0 14px;font-size:0.88rem;}
+a.pay-link{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--gold);
+  color:#2a1c04;
+  text-decoration:none;
+  font-weight:700;
+  border-radius:10px;
+  padding:13px 16px;
+  font-size:0.95rem;
+}
+a.pay-link:hover{background:#e0a52c;}
+.redirect-note{
+  margin-top:10px;
+  font-size:0.76rem;
+  color:var(--ink-faint);
+  text-align:center;
+}
+.footer-note{
+  margin-top:22px;
+  text-align:center;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  color:var(--ink-faint);
+  letter-spacing:0.04em;
+}
+.new-reg{
+  margin-top:18px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--ink-dim);
+  border-radius:10px;
+  padding:10px 14px;
+  font-size:0.82rem;
+  cursor:pointer;
+  width:100%;
+  font-family:var(--font-body);
+}
+.new-reg:hover{border-color:var(--blue);color:var(--ink);}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="wrap">
+  <div class="card">
+
+    <div id="view-form">
+      <div class="hero">
+        <div class="brand">
+          <img src="data:image/png;base64,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" alt="Foro Nacional del Seguro">
+          <span class="word">Foro NEA del Seguro<small>Registro al evento</small></span>
+        </div>
+
+        <p class="eyebrow"><span class="dot"></span>Un espacio para encontrarnos</p>
+        <h1>Foro Nacional del<br>Seguro <em>NEA 2026</em></h1>
+        <p class="lede">El seguro como motor de la economía. Estabilidad e inversión para el crecimiento de la región.</p>
+
+        <div class="hero-meta">
+          <span class="badge">8 de octubre de 2026 · 09:00 hs</span>
+          <span class="badge">Resistencia, Chaco</span>
+        </div>
+        <div class="hero-address">Centro de Convenciones Gala Resistencia — Km 1003, Ruta Nacional 11</div>
+
+        <p class="hero-organizer">Organiza <strong>APAS Chaco</strong> — en conjunto con las asociaciones APAS del NEA: Corrientes, Formosa y Misiones.</p>
+      </div>
+
+      <div class="body-pad">
+        <div id="error-banner" class="error-banner">No pudimos enviar tu registro. Probá de nuevo en unos segundos.</div>
+
+        <form id="reg-form" novalidate>
+          <div class="field">
+            <label for="f-nombre">Nombre<span class="req">*</span></label>
+            <input id="f-nombre" name="nombre" type="text" required autocomplete="given-name">
+          </div>
+          <div class="field">
+            <label for="f-apellido">Apellido<span class="req">*</span></label>
+            <input id="f-apellido" name="apellido" type="text" required autocomplete="family-name">
+          </div>
+          <div class="field">
+            <label for="f-correo">Correo<span class="req">*</span></label>
+            <input id="f-correo" name="correo" type="email" required autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="f-telefono">Teléfono<span class="req">*</span></label>
+            <input id="f-telefono" name="telefono" type="tel" required autocomplete="tel" placeholder="Con código de área, ej: 3624810417">
+          </div>
+          <div class="field">
+            <label for="f-dni">DNI<span class="req">*</span></label>
+            <input id="f-dni" name="dni" type="text" required inputmode="numeric" pattern="[0-9]{6,9}">
+          </div>
+          <div class="field">
+            <label for="f-matricula">N&deg; Matr&iacute;cula<span class="opt">(opcional)</span></label>
+            <input id="f-matricula" name="matricula" type="text">
+          </div>
+          <div class="field">
+            <label for="f-localidad">Localidad<span class="req">*</span></label>
+            <input id="f-localidad" name="localidad" type="text" required autocomplete="address-level2">
+          </div>
+          <div class="field">
+            <label for="f-provincia">Provincia<span class="req">*</span></label>
+            <input id="f-provincia" name="provincia" type="text" required autocomplete="address-level1">
+          </div>
+          <div class="field">
+            <label for="f-socio">&iquest;Sos socio de APAS Chaco?<span class="req">*</span></label>
+            <select id="f-socio" name="socio" required>
+              <option value="" disabled selected>Seleccion&aacute; una opci&oacute;n</option>
+              <option value="SI">S&iacute;</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+
+          <button class="submit" type="submit" id="submit-btn">
+            <span id="submit-label">Registrar</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="view-confirm">
+      <div class="body-pad" style="padding-top:28px">
+        <div id="status-icon" class="status-icon ok">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 id="confirm-title">¡Gracias por registrarte, <span id="confirm-name"></span>!</h2>
+        <p id="confirm-text"></p>
+
+        <div class="summary" id="summary-box"></div>
+
+        <div id="ok-block" style="display:none">
+          <div class="ok-box">Tu entrada al Foro es <strong>gratuita</strong>. Estate atento a tu correo: te vamos a enviar el acceso unos días antes del evento.</div>
+        </div>
+
+        <div id="pay-block" style="display:none">
+          <div class="pay-box">
+            <div class="pay-label">Pago pendiente</div>
+            <p>Como no figurás como socio de APAS Chaco, te estamos redirigiendo a la web de pago para completar tu entrada.</p>
+            <a class="pay-link" id="pay-link" href="https://foronea2026.paypertic.com.ar/formularios/13930/home-web">
+              Ir a pagar mi entrada ahora
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8H14M14 8L9 3M14 8L9 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+          <div class="redirect-note" id="redirect-note">Te redirigimos automáticamente en unos segundos…</div>
+        </div>
+
+        <button class="new-reg" id="new-reg-btn" type="button">Registrar a otra persona</button>
+        <div class="footer-note">ORGANIZA APAS CHACO · FORO NACIONAL DEL SEGURO NEA 2026</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  // Reemplazá esta URL por la de tu Web App de Google Apps Script
+  // (Extensiones > Apps Script > Implementar > Nueva implementación > Aplicación web)
+  var SCRIPT_URL = "PEGAR_URL_DEL_APPS_SCRIPT_ACA";
+  var PAY_URL = "https://foronea2026.paypertic.com.ar/formularios/13930/home-web";
+  var REDIRECT_DELAY_MS = 2200;
+
+  var form = document.getElementById('reg-form');
+  var viewForm = document.getElementById('view-form');
+  var viewConfirm = document.getElementById('view-confirm');
+  var errorBanner = document.getElementById('error-banner');
+  var submitBtn = document.getElementById('submit-btn');
+  var submitLabel = document.getElementById('submit-label');
+
+  function saveDraft(data){
+    try{ localStorage.setItem('foro2026_draft', JSON.stringify(data)); }catch(e){}
+  }
+  function loadDraft(){
+    try{
+      var raw = localStorage.getItem('foro2026_draft');
+      if(!raw) return;
+      var data = JSON.parse(raw);
+      Object.keys(data).forEach(function(k){
+        var el = form.elements[k];
+        if(el) el.value = data[k];
+      });
+    }catch(e){}
+  }
+  loadDraft();
+  form.addEventListener('input', function(){
+    var data = {};
+    Array.prototype.forEach.call(form.elements, function(el){
+      if(el.name) data[el.name] = el.value;
+    });
+    saveDraft(data);
+  });
+
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    if(!form.reportValidity()) return;
+
+    var data = {
+      nombre: form.nombre.value.trim(),
+      apellido: form.apellido.value.trim(),
+      correo: form.correo.value.trim(),
+      telefono: form.telefono.value.trim(),
+      dni: form.dni.value.trim(),
+      matricula: form.matricula.value.trim(),
+      localidad: form.localidad.value.trim(),
+      provincia: form.provincia.value.trim(),
+      socio: form.socio.value
+    };
+
+    errorBanner.classList.remove('show');
+    submitBtn.disabled = true;
+    submitLabel.textContent = 'Registrando...';
+
+    var finish = function(){
+      try{ localStorage.removeItem('foro2026_draft'); }catch(e){}
+      showConfirm(data);
+      submitBtn.disabled = false;
+      submitLabel.textContent = 'Registrar';
+    };
+
+    if(!SCRIPT_URL || SCRIPT_URL.indexOf('PEGAR_URL') === 0){
+      // Todavía no se configuró el Apps Script: igual mostramos la confirmación
+      // para que puedas revisar el flujo, pero no queda guardado en la planilla.
+      finish();
+      return;
+    }
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(data)
+    }).then(finish).catch(function(){
+      submitBtn.disabled = false;
+      submitLabel.textContent = 'Registrar';
+      errorBanner.classList.add('show');
+    });
+  });
+
+  function showConfirm(data){
+    document.getElementById('confirm-name').textContent = data.nombre || '';
+    var summary = document.getElementById('summary-box');
+    summary.innerHTML = '';
+    [
+      ['Nombre', data.nombre + ' ' + data.apellido],
+      ['DNI', data.dni],
+      ['Localidad', data.localidad + ', ' + data.provincia],
+      ['Socio APAS Chaco', data.socio === 'SI' ? 'Sí' : 'No']
+    ].forEach(function(pair){
+      var row = document.createElement('div');
+      row.className = 'summary-row';
+      row.innerHTML = '<span>'+pair[0]+'</span><span>'+pair[1]+'</span>';
+      summary.appendChild(row);
+    });
+
+    var icon = document.getElementById('status-icon');
+    var payBlock = document.getElementById('pay-block');
+    var okBlock = document.getElementById('ok-block');
+    var confirmText = document.getElementById('confirm-text');
+
+    if(data.socio === 'SI'){
+      icon.className = 'status-icon ok';
+      confirmText.textContent = 'Guardamos tu inscripción al Foro Nacional del Seguro NEA 2026.';
+      okBlock.style.display = 'block';
+      payBlock.style.display = 'none';
+    } else {
+      icon.className = 'status-icon pay';
+      confirmText.textContent = 'Guardamos tu inscripción al Foro Nacional del Seguro NEA 2026.';
+      payBlock.style.display = 'block';
+      okBlock.style.display = 'none';
+      setTimeout(function(){
+        window.location.href = PAY_URL;
+      }, REDIRECT_DELAY_MS);
+    }
+
+    viewForm.classList.add('hide');
+    viewConfirm.classList.add('show');
+  }
+
+  document.getElementById('new-reg-btn').addEventListener('click', function(){
+    form.reset();
+    viewForm.classList.remove('hide');
+    viewConfirm.classList.remove('show');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
+</script>
+</body>
+</html>
