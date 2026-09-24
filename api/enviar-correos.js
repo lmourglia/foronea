@@ -3,23 +3,32 @@
 // Función serverless de Vercel que se dispara sola, una vez al día
 // (ver vercel.json), y manda el próximo lote de hasta 100 correos
 // (límite del plan free de Resend) a los inscriptos del foro que
-// todavía no lo recibieron.
+// todavía no recibieron LA CAMPAÑA ACTUAL (definida por CAMPANA).
 //
-// Guarda el progreso en una tabla de Supabase (ver supabase.sql para
-// crearla). Las funciones serverless no tienen disco propio entre
-// ejecuciones, así que el estado tiene que vivir afuera.
+// El texto del correo viene de MENSAJE_TEXTO (texto plano, con
+// {{nombre}} como variable), configurado como variable de entorno en
+// Vercel — no hay Template de Resend ni HTML involucrado.
+//
+// Soporta varias campañas separadas en el tiempo (preforo, encuesta,
+// futuras invitaciones) sin que se pisen entre sí: cada una se
+// registra por separado en Supabase.
+//
+// Para lanzar una campaña nueva: cambiás CAMPANA, SUBJECT y
+// MENSAJE_TEXTO en las variables de entorno de Vercel (ver README) y
+// hacés Redeploy. No hay que tocar código ni la tabla de Supabase.
 
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY // service_role, NO la "anon" pública
+  process.env.SUPABASE_SERVICE_ROLE_KEY // service_role / sb_secret_..., NO la pública
 );
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM_EMAIL = process.env.FROM_EMAIL; // ej: foro@mail.foronea.ar
 const SHEET_CSV_URL = process.env.SHEET_CSV_URL;
 const SUBJECT = process.env.SUBJECT || 'Novedades del Foro';
+const CAMPANA = process.env.CAMPANA || 'default'; // ej: "preforo", "encuesta", "invitacion-2027"
 const LIMITE_DIARIO = 100; // límite del plan free de Resend
 const TABLA = 'foro_enviados';
 
@@ -47,7 +56,6 @@ function parsearCSV(texto) {
 }
 
 function fechaHoyArgentina() {
-  // Fecha en formato YYYY-MM-DD, en horario de Argentina (UTC-3, sin DST)
   const ahora = new Date(Date.now() - 3 * 60 * 60 * 1000);
   return ahora.toISOString().slice(0, 10);
 }
@@ -78,7 +86,6 @@ async function enviarLote(lote, textoMensaje) {
 }
 
 export default async function handler(req, res) {
-  // Protección: solo Vercel Cron (con el secreto configurado) puede disparar esto.
   const auth = req.headers.authorization;
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'No autorizado' });
@@ -87,17 +94,17 @@ export default async function handler(req, res) {
   try {
     const hoy = fechaHoyArgentina();
 
-    // ¿Ya corrió hoy? Miramos si hay algún envío registrado desde las 00:00 de hoy (hora Argentina).
     const { data: corridaHoy, error: errorCorrida } = await supabase
       .from(TABLA)
       .select('email')
+      .eq('campana', CAMPANA)
       .gte('enviado_en', `${hoy}T00:00:00-03:00`)
       .limit(1);
 
     if (errorCorrida) throw new Error(`Error consultando Supabase: ${errorCorrida.message}`);
 
     if (corridaHoy && corridaHoy.length > 0) {
-      return res.status(200).json({ ok: true, mensaje: 'Ya se corrió hoy, no se manda de nuevo.' });
+      return res.status(200).json({ ok: true, campana: CAMPANA, mensaje: 'Ya se corrió hoy, no se manda de nuevo.' });
     }
 
     const textoMensaje = process.env.MENSAJE_TEXTO;
@@ -114,7 +121,8 @@ export default async function handler(req, res) {
 
     const { data: enviadosPrevios, error: errorEnviados } = await supabase
       .from(TABLA)
-      .select('email');
+      .select('email')
+      .eq('campana', CAMPANA);
 
     if (errorEnviados) throw new Error(`Error consultando Supabase: ${errorEnviados.message}`);
 
@@ -122,24 +130,24 @@ export default async function handler(req, res) {
     const pendientes = personas.filter((p) => !setEnviados.has(p.email));
 
     if (pendientes.length === 0) {
-      return res.status(200).json({ ok: true, mensaje: 'No hay inscriptos pendientes.' });
+      return res.status(200).json({ ok: true, campana: CAMPANA, mensaje: 'No hay inscriptos pendientes para esta campaña.' });
     }
 
     const lote = pendientes.slice(0, LIMITE_DIARIO);
     await enviarLote(lote, textoMensaje);
 
-    // Guardar progreso: insertar el lote en Supabase (upsert por si se reintenta)
     const { error: errorInsert } = await supabase
       .from(TABLA)
       .upsert(
-        lote.map((p) => ({ email: p.email, enviado_en: new Date().toISOString() })),
-        { onConflict: 'email' }
+        lote.map((p) => ({ email: p.email, campana: CAMPANA, enviado_en: new Date().toISOString() })),
+        { onConflict: 'email,campana' }
       );
 
     if (errorInsert) throw new Error(`Se mandó el correo pero falló al guardar en Supabase: ${errorInsert.message}`);
 
     return res.status(200).json({
       ok: true,
+      campana: CAMPANA,
       enviados_hoy: lote.length,
       pendientes_restantes: pendientes.length - lote.length,
     });
