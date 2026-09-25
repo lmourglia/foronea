@@ -4,5 +4,12 @@
       "path": "/api/enviar-correos",
       "schedule": "0 13 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/preforo",
+      "destination": "https://docs.google.com/forms/d/e/1FAIpQLSdGZglbmEUszWkfT0jApNeMVhYD73G6qmmZLTQ92UcS-7-_KQ/viewform",
+      "permanent": false
+    }
   ]
 }
