@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/enviar-correos",
-      "schedule": "0 13 * * *"
+      "schedule": "0 18 * * *"
     }
   ],
   "redirects": [
