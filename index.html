@@ -1136,6 +1136,28 @@
     .cta-mid .hero-actions{ width:100%; flex:1 1 100%; }
     .cta-mid .btn{ flex:1 1 100%; justify-content:center; }
   }
+
+  /* Urgencia de inscripción (hero) */
+  .hero-urgent{ flex-direction:row; align-items:center; gap:14px 18px; margin-top:28px; margin-bottom:22px; }
+  .btn-xl{ padding:17px 32px; font-size:17.5px; border-radius:10px; min-height:56px; box-shadow:0 8px 28px rgba(74,159,224,.38); }
+  .reg-deadline{ display:flex; align-items:center; gap:10px; font-size:14.5px; line-height:1.4; color:#ffd9d3; background:rgba(255,107,91,.14); border:1px solid rgba(255,107,91,.55); border-radius:999px; padding:9px 16px; max-width:100%; }
+  .reg-deadline strong{ color:#fff; font-weight:600; }
+  .rd-left{ display:block; font-family:var(--font-mono); font-size:12.5px; color:#ffb4a8; letter-spacing:.02em; }
+  .rd-left:empty{ display:none; }
+  .rd-dot{ flex:none; width:10px; height:10px; border-radius:50%; background:#ff6b5b; }
+  @media (prefers-reduced-motion:no-preference){
+    .btn-xl{ animation:regPulse 2.2s ease-out infinite; }
+    .rd-dot{ animation:rdBlink 1.4s ease-in-out infinite; }
+    @keyframes regPulse{ 0%{ box-shadow:0 8px 28px rgba(74,159,224,.38),0 0 0 0 rgba(74,159,224,.55);} 70%{ box-shadow:0 8px 28px rgba(74,159,224,.38),0 0 0 16px rgba(74,159,224,0);} 100%{ box-shadow:0 8px 28px rgba(74,159,224,.38),0 0 0 0 rgba(74,159,224,0);} }
+    @keyframes rdBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
+  }
+  .hero-urgent.closed .reg-deadline{ display:none; }
+  .hero-urgent.closed .btn-xl{ animation:none; }
+  @media (max-width:1020px){
+    .hero-urgent{ flex-direction:column; align-items:center; gap:12px; margin-top:22px; margin-bottom:18px; }
+    .btn-xl{ padding:15px 26px; font-size:16.5px; min-height:52px; width:100%; max-width:380px; justify-content:center; }
+    .reg-deadline{ font-size:13.5px; padding:8px 14px; text-align:left; }
+  }
 </style>
 
 </head>
@@ -1196,14 +1218,16 @@
         <span class="badge">Gala Hotel &amp; Convenciones</span>
       </div>
 
+      <div class="hero-actions hero-urgent" id="heroReg">
+        <a class="btn btn-primary btn-xl" id="heroRegBtn" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">¡Inscribirme ahora! <span aria-hidden="true">→</span></a>
+        <div class="reg-deadline" id="regDeadline"><span class="rd-dot" aria-hidden="true"></span><span><strong>La inscripción cierra a las 00:00 hs del martes 6/10</strong><span class="rd-left" id="rdLeft"></span></span></div>
+      </div>
+
       <a class="hero-preforo" href="#preforo">
         <span class="pf-tag">Pre-Foro</span>
         <span class="pf-text"><strong>Miércoles 7 de octubre · 19:00 hs</strong>Cena en Eleven Rooftop, Resistencia. Cupos limitados.</span>
         <span class="pf-go">Ver detalles →</span>
       </a>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">Quiero inscribirme</a>
-      </div>
 
       <div class="hero-countdown" aria-live="off">
         <div class="cd-label-top">Faltan para el Foro</div>
@@ -1229,7 +1253,7 @@
         <a class="kf kf-link" href="#faq-pcc"><div class="kf-k">Capacitación</div><div class="kf-v">Se acredita PCC</div><div class="kf-s">Para Productores Asesores de Seguros →</div></a>
         <a class="kf kf-link" href="#sede"><div class="kf-k">En el lugar</div><div class="kf-v">Estacionamiento y wifi</div><div class="kf-s">Food trucks y agua caliente para mate →</div></a>
         <a class="kf kf-link kf-gold" href="#preforo"><div class="kf-k">Pre-Foro</div><div class="kf-v">Miércoles 7 · 19:00 hs</div><div class="kf-s">Cena en Eleven Rooftop →</div></a>
-        <a class="kf kf-link" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener"><div class="kf-k">Inscripción</div><div class="kf-v">Solo con el botón Inscribirme</div><div class="kf-s">Cupos por orden de inscripción →</div></a>
+        <a class="kf kf-link" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener"><div class="kf-k">Inscripción</div><div class="kf-v">Hasta las 00:00 hs del 6/10</div><div class="kf-s">Solo con el botón Inscribirme →</div></a>
       </div>
     </div>
   </section>
@@ -1484,7 +1508,7 @@
       <div class="cta-mid">
         <div>
           <h2>Reservá tu lugar en el Foro</h2>
-          <p>La inscripción es solo desde el botón. Los cupos se otorgan por orden de inscripción.</p>
+          <p>La inscripción cierra a las 00:00 hs del martes 6/10 y es solo desde el botón. Los cupos se otorgan por orden de inscripción.</p>
         </div>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">Inscribirme</a>
@@ -1760,12 +1784,36 @@
           <div class="sub">Aliado del Foro</div>
         </div>
         <div class="org-card">
+          <div class="logo-chip"><img loading="lazy" decoding="async" alt="El Seguro y La Prevención" width="220" height="215" src="img/el-seguro-la-prevencion.1a3d780d.webp"></div>
+          <div class="sub">Medio aliado del Foro</div>
+        </div>
+        <div class="org-card">
           <div class="logo-chip"><img loading="lazy" decoding="async" alt="OSDE" width="360" height="147" src="img/osde.6f326bff.webp"></div>
           <div class="sub">Medicina prepaga aliada</div>
         </div>
         <div class="org-card">
           <div class="logo-chip"><img loading="lazy" decoding="async" alt="Vendé Tu Chocado" width="360" height="158" src="img/vende-tu-chocado.9e3a0308.webp"></div>
           <div class="sub">Empresa aliada del Foro</div>
+        </div>
+        <div class="org-card">
+          <div class="logo-chip"><img loading="lazy" decoding="async" alt="Amanda" width="360" height="131" src="img/amanda.7395bf6c.webp"></div>
+          <div class="sub">Empresa aliada del Foro</div>
+        </div>
+        <div class="org-card">
+          <div class="logo-chip"><img loading="lazy" decoding="async" alt="Ojeda Agropecuaria" width="240" height="213" src="img/ojeda-agropecuaria.e738f363.webp"></div>
+          <div class="sub">Empresa aliada del Foro</div>
+        </div>
+        <div class="org-card">
+          <div class="logo-chip"><img loading="lazy" decoding="async" alt="Gobierno del Chaco" width="300" height="97" src="img/gobierno-del-chaco.23ab8090.webp"></div>
+          <div class="sub">Aliado institucional</div>
+        </div>
+        <div class="org-card">
+          <div class="logo-chip"><img loading="lazy" decoding="async" alt="ECOM Tecnología y Comunicaciones" width="300" height="94" src="img/ecom.33bb642c.webp"></div>
+          <div class="sub">Empresa aliada del Foro</div>
+        </div>
+        <div class="org-card">
+          <div class="logo-chip"><img loading="lazy" decoding="async" alt="Lotería Chaqueña" width="360" height="157" src="img/loteria-chaquena.9c4169e5.webp"></div>
+          <div class="sub">Aliado del Foro</div>
         </div>
       </div>
     </div>
@@ -2001,6 +2049,21 @@ window.addEventListener('load',function(){
     document.querySelectorAll('.hero-slides img[data-src]').forEach(function(i){ i.src=i.getAttribute('data-src'); i.removeAttribute('data-src'); });
   },1200);
 });
+</script>
+
+<script>
+(function(){
+  var end = new Date("2026-10-06T00:00:00-03:00").getTime();
+  var box = document.getElementById('heroReg'), left = document.getElementById('rdLeft');
+  if(!box || !left) return;
+  function upd(){
+    var d = end - Date.now();
+    if(d <= 0){ box.classList.add('closed'); return; }
+    var days = Math.floor(d/86400000), h = Math.floor((d%86400000)/3600000), m = Math.floor((d%3600000)/60000);
+    left.textContent = days >= 1 ? 'Quedan ' + days + (days === 1 ? ' día y ' : ' días y ') + h + ' h' : (h >= 1 ? '¡Último día! Quedan ' + h + ' h ' + m + ' min' : '¡Últimos minutos! Quedan ' + m + ' min');
+  }
+  upd(); setInterval(upd, 30000);
+})();
 </script>
 </body>
 </html>
