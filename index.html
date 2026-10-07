@@ -5,14 +5,14 @@
 <title>Foro NEA del Seguro 2026 | El seguro como motor de la economía</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f2743">
-<meta name="description" content="Un encuentro para aprender, conectar y descubrir las nuevas oportunidades de la industria aseguradora. Referentes, capacitación, innovación y networking. Inscribite y reservá tu lugar.">
+<meta name="description" content="Un encuentro para aprender, conectar y descubrir las nuevas oportunidades de la industria aseguradora. Referentes, capacitación, innovación y networking. Nos vemos el 8 de octubre en Resistencia.">
 <meta name="author" content="ACL Digital">
 <link rel="canonical" href="https://www.foronea.ar/">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.foronea.ar">
 <meta property="og:title" content="Foro del NEA del Seguro 2026 | El encuentro que conecta al sector asegurador">
-<meta property="og:description" content="Un encuentro para aprender, conectar y descubrir las nuevas oportunidades de la industria aseguradora. Referentes, capacitación, innovación y networking. Inscribite y reservá tu lugar.">
+<meta property="og:description" content="Un encuentro para aprender, conectar y descubrir las nuevas oportunidades de la industria aseguradora. Referentes, capacitación, innovación y networking. Nos vemos el 8 de octubre en Resistencia.">
 <meta property="og:image" content="https://www.foronea.ar/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -20,7 +20,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Foro del NEA del Seguro 2026 | El encuentro que conecta al sector asegurador">
-<meta name="twitter:description" content="Un encuentro para aprender, conectar y descubrir las nuevas oportunidades de la industria aseguradora. Referentes, capacitación, innovación y networking. Inscribite y reservá tu lugar.">
+<meta name="twitter:description" content="Un encuentro para aprender, conectar y descubrir las nuevas oportunidades de la industria aseguradora. Referentes, capacitación, innovación y networking. Nos vemos el 8 de octubre en Resistencia.">
 <meta name="twitter:image" content="https://www.foronea.ar/og-image.jpg">
 
 <script type="application/ld+json">
@@ -69,10 +69,10 @@
     },
     {
       "@type": "Question",
-      "name": "¿Cómo me inscribo?",
+      "name": "¿Puedo inscribirme todavía?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Solo desde el botón Inscribirme. Los cupos se otorgan por orden de inscripción."
+        "text": "No. La inscripción al Foro ya cerró. Gracias a quienes se sumaron; los esperamos el 8 de octubre."
       }
     },
     {
@@ -80,7 +80,7 @@
       "name": "¿Cuánto cuesta la entrada?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "El valor se define en el formulario de inscripción, según el tipo de asistencia y de dónde venís."
+        "text": "El valor se definió en el formulario de inscripción, según el tipo de asistencia y de dónde venía cada persona."
       }
     },
     {
@@ -1162,6 +1162,12 @@
   /* Crédito LM Lab (discreto) */
   .credit-ig{ display:inline-flex; align-items:center; gap:6px; padding:10px 0; }
   .credit-ig svg{ flex:none; opacity:.85; }
+
+  /* Inscripción cerrada */
+  .btn-xl.nopulse{ animation:none; }
+  .reg-closed{ color:var(--ink-dim); background:rgba(255,255,255,.07); border-color:var(--line-strong); }
+  .reg-closed .rd-dot{ animation:none; background:var(--blue); }
+  .reg-closed .rd-left{ display:block; font-family:var(--font-body); font-size:13.5px; letter-spacing:0; color:var(--ink-dim); }
 </style>
 
 </head>
@@ -1182,7 +1188,7 @@
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-primary" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">Inscribirme</a>
+      <a class="btn btn-primary" href="#programa">Ver programa</a>
     </div>
     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -1196,7 +1202,7 @@
     <a href="#hospedaje">Hoteles</a>
     <a href="#turismo">Turismo</a>
     <a href="#faq">FAQ</a>
-    <a class="btn btn-primary" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">Inscribirme</a>
+    <a class="btn btn-primary" href="#programa">Ver programa</a>
   </div>
 </header>
 
@@ -1222,9 +1228,9 @@
         <span class="badge">Gala Hotel &amp; Convenciones</span>
       </div>
 
-      <div class="hero-actions hero-urgent" id="heroReg">
-        <a class="btn btn-primary btn-xl" id="heroRegBtn" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">¡Inscribirme ahora! <span aria-hidden="true">→</span></a>
-        <div class="reg-deadline" id="regDeadline"><span class="rd-dot" aria-hidden="true"></span><span><strong>La inscripción cierra a las 00:00 hs del martes 6/10</strong><span class="rd-left" id="rdLeft"></span></span></div>
+      <div class="hero-actions hero-urgent">
+        <a class="btn btn-primary btn-xl nopulse" href="#programa">Ver el programa <span aria-hidden="true">→</span></a>
+        <div class="reg-deadline reg-closed"><span class="rd-dot" aria-hidden="true"></span><span><strong>Inscripciones cerradas</strong><span class="rd-left">¡Gracias por sumarte! Nos vemos el 8 de octubre.</span></span></div>
       </div>
 
       <a class="hero-preforo" href="#preforo">
@@ -1257,7 +1263,7 @@
         <a class="kf kf-link" href="#faq-pcc"><div class="kf-k">Capacitación</div><div class="kf-v">Se acredita PCC</div><div class="kf-s">Para Productores Asesores de Seguros →</div></a>
         <a class="kf kf-link" href="#sede"><div class="kf-k">En el lugar</div><div class="kf-v">Estacionamiento y wifi</div><div class="kf-s">Food trucks y agua caliente para mate →</div></a>
         <a class="kf kf-link kf-gold" href="#preforo"><div class="kf-k">Pre-Foro</div><div class="kf-v">Miércoles 7 · 19:00 hs</div><div class="kf-s">Cena en Eleven Rooftop →</div></a>
-        <a class="kf kf-link" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener"><div class="kf-k">Inscripción</div><div class="kf-v">Hasta las 00:00 hs del 6/10</div><div class="kf-s">Solo con el botón Inscribirme →</div></a>
+        <div class="kf"><div class="kf-k">Inscripción</div><div class="kf-v">Cerrada</div><div class="kf-s">¡Gracias por sumarte!</div></div>
       </div>
     </div>
   </section>
@@ -1511,12 +1517,12 @@
     <div class="wrap">
       <div class="cta-mid">
         <div>
-          <h2>Reservá tu lugar en el Foro</h2>
-          <p>La inscripción cierra a las 00:00 hs del martes 6/10 y es solo desde el botón. Los cupos se otorgan por orden de inscripción.</p>
+          <h2>Nos vemos el jueves 8 de octubre</h2>
+          <p>La inscripción al Foro ya cerró. ¡Gracias a quienes se sumaron! Mirá el programa y cómo llegar al Centro de Convenciones Gala.</p>
         </div>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">Inscribirme</a>
-          <a class="btn btn-ghost" href="#preforo">Ver el Pre-Foro</a>
+          <a class="btn btn-primary" href="#programa">Ver el programa</a>
+          <a class="btn btn-ghost" href="#sede">Cómo llegar</a>
         </div>
       </div>
     </div>
@@ -1885,12 +1891,12 @@
           <div class="faq-a">Es el <b>jueves 8 de octubre de 2026</b> en el Centro de Convenciones Gala (Gala Hotel &amp; Convenciones), Ruta Nacional 11, Km 1003, Resistencia, Chaco. Las acreditaciones abren a las 9:00 hs y el acto de apertura comienza a las 10:00 hs. Mirá el <a class="venue-map-link" href="#programa">cronograma completo</a>.</div>
         </details>
         <details class="faq-item">
-          <summary>¿Cómo me inscribo?</summary>
-          <div class="faq-a">Solo desde el botón <b>Inscribirme</b>. Los cupos se otorgan por orden de inscripción.</div>
+          <summary>¿Puedo inscribirme todavía?</summary>
+          <div class="faq-a">No. La inscripción al Foro <b>ya cerró</b>. Gracias a quienes se sumaron; los esperamos el 8 de octubre.</div>
         </details>
         <details class="faq-item">
           <summary>¿Cuánto cuesta la entrada?</summary>
-          <div class="faq-a">El valor se define en el formulario de inscripción, según el tipo de asistencia y de dónde venís.</div>
+          <div class="faq-a">El valor se definió en el formulario de inscripción, según el tipo de asistencia y de dónde venía cada persona.</div>
         </details>
         <details class="faq-item">
           <summary>¿Quién puede asistir?</summary>
@@ -1937,12 +1943,11 @@
       <div class="cta-band">
         <div>
           <p class="eyebrow"><span class="dot"></span>Contacto</p>
-          <h2 style="margin-top:14px;">Sumate al Foro NEA 2026</h2>
-          <p style="margin-bottom:10px;"><span class="badge urgent">Cupos limitados</span></p>
-          <p>Al inscribirte serás redirigido al formulario de inscripción. Cuanto antes te anotes, antes aseguras tu lugar en el evento — los cupos se otorgan por orden de inscripción.</p>
+          <h2 style="margin-top:14px;">Nos vemos en el Foro NEA 2026</h2>
+          <p style="margin-bottom:10px;"><span class="badge urgent">Inscripción cerrada</span></p>
+          <p>La inscripción al Foro ya cerró. Gracias a todos los que se sumaron. Si tenés alguna consulta, escribinos o llamanos.</p>
           <div class="hero-actions" style="margin-top:28px;">
-            <a class="btn btn-primary" href="https://www.foronea.ar/foro-registro.html" target="_blank" rel="noopener">Quiero inscribirme</a>
-            <a class="btn btn-ghost" href="tel:+5493624133172">Llamar</a>
+            <a class="btn btn-primary" href="tel:+5493624133172">Llamar</a>
           </div>
         </div>
         <div class="contact-list">
@@ -2056,19 +2061,5 @@ window.addEventListener('load',function(){
 });
 </script>
 
-<script>
-(function(){
-  var end = new Date("2026-10-06T00:00:00-03:00").getTime();
-  var box = document.getElementById('heroReg'), left = document.getElementById('rdLeft');
-  if(!box || !left) return;
-  function upd(){
-    var d = end - Date.now();
-    if(d <= 0){ box.classList.add('closed'); return; }
-    var days = Math.floor(d/86400000), h = Math.floor((d%86400000)/3600000), m = Math.floor((d%3600000)/60000);
-    left.textContent = days >= 1 ? 'Quedan ' + days + (days === 1 ? ' día y ' : ' días y ') + h + ' h' : (h >= 1 ? '¡Último día! Quedan ' + h + ' h ' + m + ' min' : '¡Últimos minutos! Quedan ' + m + ' min');
-  }
-  upd(); setInterval(upd, 30000);
-})();
-</script>
 </body>
 </html>
